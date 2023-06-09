@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.handson.basic.models.*;
 import com.handson.basic.repo.StudentService;
+import com.handson.basic.util.AWSService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,8 @@ import javax.persistence.EntityManager;
 import javax.validation.constraints.Min;
 //import java.time.LocalDate;
 import org.joda.time.LocalDate;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -36,6 +39,9 @@ public class StudentsController {
     @Autowired
     ObjectMapper om; // sql entity to java entity
 
+    @Autowired
+    AWSService awsService;
+
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity<PaginationAndList> search(@RequestParam(required = false) String fullName,
                                                     @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fromBirthDate,
@@ -54,6 +60,8 @@ public class StudentsController {
                         aFPSField().field("s.birth_date").alias("birthdate").build(),
                         aFPSField().field("s.sat_score").alias("satscore").build(),
                         aFPSField().field("s.graduation_score").alias("graduationscore").build(),
+                        aFPSField().field("s.phone").alias("phone").build(),
+                        aFPSField().field("s.profile_picture").alias("profilepicture").build(),
                         aFPSField().field("(select avg(sg.course_score) from  student_grade sg where sg.student_id = s.id ) ").alias("avgscore").build()
                 ))
                 .from(List.of(" student s"))
@@ -73,6 +81,18 @@ public class StudentsController {
     public ResponseEntity<?> getOneStudent(@PathVariable Long id)
     {
         return new ResponseEntity<>(studentService.findById(id), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{id}/image", method = RequestMethod.PUT)
+    public ResponseEntity<?> uploadStudentImage(@PathVariable Long id,  @RequestParam("image") MultipartFile image) // student id and image file
+    {
+        Optional<Student> dbStudent = studentService.findById(id);
+        if (dbStudent.isEmpty()) throw new RuntimeException("Student with id: " + id + " not found");
+        String bucketPath = "apps/Yuval/student-" +  id + ".png" ;
+        awsService.putInBucket(image, bucketPath);
+        dbStudent.get().setProfilePicture(bucketPath);
+        Student updatedStudent = studentService.save(dbStudent.get());
+        return new ResponseEntity<>(StudentOut.of(updatedStudent, awsService) , HttpStatus.OK);
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)

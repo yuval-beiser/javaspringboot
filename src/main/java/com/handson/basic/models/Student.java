@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
-
 @Entity
 @Table(name = "student")
 public class Student implements Serializable {
@@ -45,6 +44,32 @@ public class Student implements Serializable {
     @Max(800)
     private Integer satScore;
     private Double graduationScore;
+
+    @Length(max = 20)
+    private String phone;
+
+    @Length(max = 500)
+    private String profilePicture;
+
+    public Collection<StudentGrade> getStudentGrades() {
+        return studentGrades;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
+    }
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonProperty("createdAt")
@@ -98,13 +123,24 @@ public class Student implements Serializable {
         this.graduationScore = graduationScore;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public static final class StudentBuilder {
         private Long id;
-        private Date createdAt = Dates.nowUTC();
-        private String fullname;
+        private @NotNull Date createdAt;
+        private Collection<StudentGrade> studentGrades;
+        private @NotEmpty @Length(max = 60) String fullname;
         private Date birthDate;
-        private Integer satScore;
+        private @Min(100) @Max(800) Integer satScore;
         private Double graduationScore;
+        private @Length(max = 20) String phone;
+        private @Length(max = 500) String profilePicture;
 
         private StudentBuilder() {
         }
@@ -120,6 +156,11 @@ public class Student implements Serializable {
 
         public StudentBuilder createdAt(Date createdAt) {
             this.createdAt = createdAt;
+            return this;
+        }
+
+        public StudentBuilder studentGrades(Collection<StudentGrade> studentGrades) {
+            this.studentGrades = studentGrades;
             return this;
         }
 
@@ -143,14 +184,26 @@ public class Student implements Serializable {
             return this;
         }
 
+        public StudentBuilder phone(String phone) {
+            this.phone = phone;
+            return this;
+        }
+
+        public StudentBuilder profilePicture(String profilePicture) {
+            this.profilePicture = profilePicture;
+            return this;
+        }
+
         public Student build() {
             Student student = new Student();
-            student.fullname = this.fullname;
-            student.satScore = this.satScore;
-            student.graduationScore = this.graduationScore;
-            student.createdAt = this.createdAt;
-            student.birthDate = this.birthDate;
-            student.id = this.id;
+            student.setId(id);
+            student.setCreatedAt(createdAt);
+            student.setFullname(fullname);
+            student.setBirthDate(birthDate);
+            student.setSatScore(satScore);
+            student.setGraduationScore(graduationScore);
+            student.setPhone(phone);
+            student.setProfilePicture(profilePicture);
             return student;
         }
     }
