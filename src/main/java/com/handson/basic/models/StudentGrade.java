@@ -16,37 +16,33 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Table(name="student_grade")
+@Table(name = "student_grade")
 public class StudentGrade implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @NotNull
     @Column(nullable = false, updatable = false)
     private Date createdAt = Dates.nowUTC();
+    @JsonIgnore
+    @NotNull
+    @ManyToOne(optional = false) // many grades to one student
+    @JoinColumn(name = "studentId")
+    private Student student;
+    @NotEmpty
+    @Length(max = 60)
+    private String courseName;
+    @Min(10)
+    @Max(100)
+    private Integer courseScore;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonProperty("createdAt")
     public LocalDateTime calcCreatedAt() {
         return Dates.atLocalTime(createdAt);
     }
-
-    @JsonIgnore
-    @NotNull
-    @ManyToOne(optional = false) // many grades to one student
-    @JoinColumn(name = "studentId")
-    private Student student;
-
-    @NotEmpty
-    @Length(max = 60)
-    private String courseName;
-
-
-    @Min(10)
-    @Max(100)
-    private Integer courseScore;
 
     public Long getId() {
         return id;

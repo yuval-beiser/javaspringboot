@@ -1,10 +1,9 @@
 package com.handson.basic.models;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.handson.basic.util.Dates;
-import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
 import javax.persistence.Entity;
@@ -20,29 +19,39 @@ public class StudentOut {
     private Long id;
 
     private Date createdat;
+    private String fullname;
+    private Date birthdate;
+    private Integer satscore;
+    private Double graduationscore;
+    private Double avgscore;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonProperty("createdat")
     public LocalDateTime calcCreatedAt() {
         return Dates.atLocalTime(createdat);
     }
 
-    private String fullname;
-    private Date birthdate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @JsonProperty("birthdate")
     public LocalDateTime calcBirthDate() {
         return Dates.atLocalTime(birthdate);
     }
 
-    private Integer satscore;
-    private Double graduationscore;
-    private Double avgscore;
     public Date getCreatedat() {
         return createdat;
     }
 
+    public void setCreatedat(Date createdat) {
+        this.createdat = createdat;
+    }
+
     public Date getBirthdate() {
         return birthdate;
+    }
+
+    public void setBirthdate(Date birthDate)
+    {
+        this.birthdate = birthDate;
     }
 
     @Id
@@ -58,20 +67,12 @@ public class StudentOut {
         return fullname;
     }
 
-    public Integer getSatscore() {
-        return satscore;
-    }
-
-    public void setCreatedat(Date createdat) {
-        this.createdat = createdat;
-    }
-
     public void setFullname(String fullname) {
         this.fullname = fullname;
     }
 
-    public void setBirthdate(Date birthDate) {
-        this.birthdate = birthDate;
+    public Integer getSatscore() {
+        return satscore;
     }
 
     public void setSatscore(Integer satscore) {

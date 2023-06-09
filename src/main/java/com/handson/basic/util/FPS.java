@@ -13,10 +13,15 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 public class FPS {
+    TimeZone utcTz = TimeZone.getTimeZone("UTC");
+    SimpleDateFormat isoDf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'"); // Quoted "Z" to indicate UTC, no timezone offset
     private List<FPSField> select = new ArrayList<>();
     private List<String> from = new ArrayList<>();
     private List<String> joins = new ArrayList<>();
@@ -27,9 +32,6 @@ public class FPS {
     private Integer count;
     private Class itemClass;
 
-
-    TimeZone utcTz = TimeZone.getTimeZone("UTC");
-    SimpleDateFormat isoDf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'"); // Quoted "Z" to indicate UTC, no timezone offset
     public FPS() {
         super();
         isoDf.setTimeZone(utcTz);
@@ -38,19 +40,19 @@ public class FPS {
     public PaginationAndList exec(EntityManager em, ObjectMapper om) throws JsonProcessingException {
         Query qrySelect = em.createNativeQuery(getSelectSql(), itemClass);
         Query qryCount = em.createNativeQuery(getCountSql());
-        conditions.forEach(x-> {
+        conditions.forEach(x -> {
             if (x.getValue() != null) {
                 qrySelect.setParameter(x.getParameterName(), x.getValue());
                 qryCount.setParameter(x.getParameterName(), x.getValue());
             }
         });
-        List rows =  qrySelect.getResultList();
+        List rows = qrySelect.getResultList();
         BigInteger total = (BigInteger) qryCount.getSingleResult();
-        return PaginationAndList.of(Pagination.of(page, (total.intValue() / count) + 1, total.intValue()) ,rows);
+        return PaginationAndList.of(Pagination.of(page, (total.intValue() / count) + 1, total.intValue()), rows);
     }
 
     private String getSelectSql() {
-        String fieldsSql = " select " + select.stream().map(f -> f.getField() + " " + f.getAlias()) .collect(Collectors.joining(","));
+        String fieldsSql = " select " + select.stream().map(f -> f.getField() + " " + f.getAlias()).collect(Collectors.joining(","));
         String fromSql = getFromSql();
         String whereSql = getWhereSql();
         String orderSql = "";
@@ -81,7 +83,7 @@ public class FPS {
         String fieldsSql = " select count(*)";
         String fromSql = getFromSql();
         String whereSql = getWhereSql();
-        return fieldsSql + fromSql + whereSql ;
+        return fieldsSql + fromSql + whereSql;
     }
 
     private boolean isaBoolean(Object o) {
@@ -89,7 +91,7 @@ public class FPS {
     }
 
     private boolean isDate(Object o) {
-        return o instanceof Date  || o instanceof java.sql.Date || o instanceof Timestamp;
+        return o instanceof Date || o instanceof java.sql.Date || o instanceof Timestamp;
     }
 
     private boolean isNumeric(Object o) {

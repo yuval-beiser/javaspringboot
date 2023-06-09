@@ -11,6 +11,13 @@ public class PaginationAndList {
     public PaginationAndList() {
     }
 
+    public static PaginationAndList of(Pagination pagination, List data) {
+        PaginationAndList res = new PaginationAndList();
+        res.pagination = pagination;
+        res.data = data;
+        return res;
+    }
+
     public Pagination getPagination() {
         return this.pagination;
     }
@@ -19,18 +26,11 @@ public class PaginationAndList {
         return this.data;
     }
 
-    public static PaginationAndList of(Pagination pagination, List data) {
-        PaginationAndList res = new PaginationAndList();
-        res.pagination = pagination;
-        res.data = data;
-        return res;
-    }
-
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         } else if (o != null && this.getClass() == o.getClass()) {
-            PaginationAndList that = (PaginationAndList)o;
+            PaginationAndList that = (PaginationAndList) o;
             return Objects.equals(this.pagination, that.pagination) && Objects.equals(this.data, that.data);
         } else {
             return false;
@@ -38,7 +38,7 @@ public class PaginationAndList {
     }
 
     public int hashCode() {
-        return Objects.hash(new Object[]{this.pagination, this.data});
+        return Objects.hash(this.pagination, this.data);
     }
 
     public String toString() {

@@ -1,26 +1,16 @@
 package com.handson.basic.controller;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.handson.basic.models.*;
+
+import com.handson.basic.models.GradeIn;
+import com.handson.basic.models.Student;
+import com.handson.basic.models.StudentGrade;
 import com.handson.basic.repo.StudentGradeService;
 import com.handson.basic.repo.StudentService;
-import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityManager;
-import javax.validation.constraints.Min;
-import java.util.List;
 import java.util.Optional;
-
-import static com.handson.basic.util.Dates.atUtc;
-import static com.handson.basic.util.FPS.FPSBuilder.aFPS;
-import static com.handson.basic.util.FPSCondition.FPSConditionBuilder.aFPSCondition;
-import static com.handson.basic.util.FPSField.FPSFieldBuilder.aFPSField;
-import static com.handson.basic.util.Strings.likeLowerOrNull;
 
 @RestController
 @RequestMapping("/api/students")
@@ -32,20 +22,17 @@ public class StudentsGradesController {
     StudentGradeService studentGradeService;
 
 
-
     @RequestMapping(value = "/{studentId}/grades", method = RequestMethod.POST)
-    public ResponseEntity<?> insertStudentGrade(Long studentId,  @RequestBody GradeIn gradeIn)
-    {
+    public ResponseEntity<?> insertStudentGrade(Long studentId, @RequestBody GradeIn gradeIn) {
         var student = studentService.findById(studentId);
-        if (student.isEmpty()) throw new RuntimeException("Student:" + studentId +" not found");
+        if (student.isEmpty()) throw new RuntimeException("Student:" + studentId + " not found");
         StudentGrade studentGrade = gradeIn.toGrade(student.get());
         studentGrade = studentGradeService.save(studentGrade);
         return new ResponseEntity<>(studentGrade, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{studentId}/grades/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateStudent(@PathVariable Long studentId, @PathVariable Long id, @RequestBody GradeIn gradeIn)
-    {
+    public ResponseEntity<?> updateStudent(@PathVariable Long studentId, @PathVariable Long id, @RequestBody GradeIn gradeIn) {
         Optional<Student> dbStudent = studentService.findById(studentId);
         if (dbStudent.isEmpty()) throw new RuntimeException("Student with id: " + studentId + " not found");
 
@@ -58,8 +45,7 @@ public class StudentsGradesController {
     }
 
     @RequestMapping(value = "/{studentId}/grades/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteStudentGrade(@PathVariable Long studentId, @PathVariable Long id)
-    {
+    public ResponseEntity<?> deleteStudentGrade(@PathVariable Long studentId, @PathVariable Long id) {
         Optional<Student> dbStudent = studentService.findById(studentId);
         if (dbStudent.isEmpty()) throw new RuntimeException("Student with id: " + studentId + " not found");
 

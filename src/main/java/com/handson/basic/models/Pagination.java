@@ -11,6 +11,14 @@ public class Pagination {
     public Pagination() {
     }
 
+    public static Pagination of(Integer page, Integer ofPage, Integer count) {
+        Pagination res = new Pagination();
+        res.page = page;
+        res.ofPage = ofPage;
+        res.count = count;
+        return res;
+    }
+
     public Integer getPage() {
         return this.page;
     }
@@ -23,19 +31,11 @@ public class Pagination {
         return this.count;
     }
 
-    public static Pagination of(Integer page, Integer ofPage, Integer count) {
-        Pagination res = new Pagination();
-        res.page = page;
-        res.ofPage = ofPage;
-        res.count = count;
-        return res;
-    }
-
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         } else if (o != null && this.getClass() == o.getClass()) {
-            Pagination that = (Pagination)o;
+            Pagination that = (Pagination) o;
             return Objects.equals(this.page, that.page) && Objects.equals(this.ofPage, that.ofPage) && Objects.equals(this.count, that.count);
         } else {
             return false;
@@ -43,7 +43,7 @@ public class Pagination {
     }
 
     public int hashCode() {
-        return Objects.hash(new Object[]{this.page, this.ofPage, this.count});
+        return Objects.hash(this.page, this.ofPage, this.count);
     }
 
     public String toString() {

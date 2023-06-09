@@ -1,4 +1,5 @@
 package com.handson.basic.models;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.handson.basic.util.Dates;
@@ -6,26 +7,44 @@ import org.hibernate.validator.constraints.Length;
 import org.joda.time.LocalDateTime;
 
 import javax.persistence.*;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+
 
 @Entity
-@Table(name="student")
+@Table(name = "student")
 public class Student implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @NotNull
     @Column(nullable = false, updatable = false)
     private Date createdAt = Dates.nowUTC();
+    @OneToMany(mappedBy = "student", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}) // one student many grades
+    private final Collection<StudentGrade> studentGrades = new ArrayList<>();
+    @NotEmpty
+    @Length(max = 60)
+    private String fullname;
+
+    // REMOVE - If remove student -> remove all grades
+    // PERSIST - if change student ID -> update the grades student ID
+    private Date birthDate;
+
+//    public Collection<StudentGrade> getStudentGrades() {
+//        return studentGrades;
+//    }
+    @Min(100)
+    @Max(800)
+    private Integer satScore;
+    private Double graduationScore;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonProperty("createdAt")
@@ -33,52 +52,14 @@ public class Student implements Serializable {
         return Dates.atLocalTime(createdAt);
     }
 
-    @OneToMany(mappedBy = "student", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}) // one student many grades
-    private Collection<StudentGrade> studentGrades = new ArrayList<>();
-
-    // REMOVE - If remove student -> remove all grades
-    // PERSIST - if change student ID -> update the grades student ID
-
-    @NotEmpty
-    @Length(max = 60)
-    private String fullname;
-
-//    public Collection<StudentGrade> getStudentGrades() {
-//        return studentGrades;
-//    }
-
-    private Date birthDate;
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @JsonProperty("birthDate")
     public LocalDateTime calcBirthDate() {
         return Dates.atLocalTime(birthDate);
     }
 
-    @Min(100)
-    @Max(800)
-    private Integer satScore;
-
-    private Double graduationScore;
-
     public Long getId() {
         return id;
-    }
-
-    public void setFullname(String fullname) {
-        this.fullname = fullname;
-    }
-
-    public void setBirthDate(Date birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    public void setSatScore(Integer satScore) {
-        this.satScore = satScore;
-    }
-
-    public void setGraduationScore(Double graduationScore) {
-        this.graduationScore = graduationScore;
     }
 
     public Date getCreatedAt() {
@@ -89,16 +70,32 @@ public class Student implements Serializable {
         return fullname;
     }
 
+    public void setFullname(String fullname) {
+        this.fullname = fullname;
+    }
+
     public Date getBirthDate() {
         return birthDate;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
     }
 
     public Integer getSatScore() {
         return satScore;
     }
 
+    public void setSatScore(Integer satScore) {
+        this.satScore = satScore;
+    }
+
     public Double getGraduationScore() {
         return graduationScore;
+    }
+
+    public void setGraduationScore(Double graduationScore) {
+        this.graduationScore = graduationScore;
     }
 
     public static final class StudentBuilder {
