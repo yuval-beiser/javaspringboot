@@ -33,8 +33,11 @@ public class Student implements Serializable {
         return Dates.atLocalTime(createdAt);
     }
 
-//    @OneToMany(mappedBy = "student", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-//    private Collection<StudentGrade> studentGrades = new ArrayList<>();
+    @OneToMany(mappedBy = "student", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}) // one student many grades
+    private Collection<StudentGrade> studentGrades = new ArrayList<>();
+
+    // REMOVE - If remove student -> remove all grades
+    // PERSIST - if change student ID -> update the grades student ID
 
     @NotEmpty
     @Length(max = 60)
