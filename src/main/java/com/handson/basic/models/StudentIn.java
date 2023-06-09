@@ -31,9 +31,11 @@ public class StudentIn implements Serializable {
     @Length(max = 20)
     private String phone;
     public Student toStudent() {
-        return aStudent().birthDate(Dates.atUtc(birthDate)).fullname(fullname).satScore(satScore).graduationScore(graduationScore).build();
+        return aStudent().birthDate(Dates.atUtc(birthDate)).fullname(fullname)
+                .satScore(satScore).graduationScore(graduationScore)
+                .phone(phone)
+                .build();
     }
-
     public void updateStudent(Student student) {
         student.setBirthDate(Dates.atUtc(birthDate));
         student.setFullname(fullname);

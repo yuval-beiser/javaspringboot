@@ -37,9 +37,6 @@ public class Student implements Serializable {
     // PERSIST - if change student ID -> update the grades student ID
     private Date birthDate;
 
-//    public Collection<StudentGrade> getStudentGrades() {
-//        return studentGrades;
-//    }
     @Min(100)
     @Max(800)
     private Integer satScore;
@@ -133,12 +130,11 @@ public class Student implements Serializable {
 
     public static final class StudentBuilder {
         private Long id;
-        private @NotNull Date createdAt;
-        private Collection<StudentGrade> studentGrades;
+        private @NotNull Date createdAt = Dates.nowUTC();
         private @NotEmpty @Length(max = 60) String fullname;
         private Date birthDate;
         private @Min(100) @Max(800) Integer satScore;
-        private Double graduationScore;
+        private @Min(30) @Max(110) Double graduationScore;
         private @Length(max = 20) String phone;
         private @Length(max = 500) String profilePicture;
 
@@ -156,11 +152,6 @@ public class Student implements Serializable {
 
         public StudentBuilder createdAt(Date createdAt) {
             this.createdAt = createdAt;
-            return this;
-        }
-
-        public StudentBuilder studentGrades(Collection<StudentGrade> studentGrades) {
-            this.studentGrades = studentGrades;
             return this;
         }
 
