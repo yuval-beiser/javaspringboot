@@ -17,3 +17,11 @@ Microservices
 Postman
 Newman
 Tests
+
+oc get pods / kubectl get pods
+oc describe deployment
+oc describe pod #pod_name#
+oc get projects
+oc expose service my-service
+oc delete pod #pod_name#
+
