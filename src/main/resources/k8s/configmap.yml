@@ -1,3 +1,4 @@
+# local variables - application.properties
 apiVersion: v1
 data:
   application.properties: |-
@@ -15,6 +16,14 @@ data:
     management.endpoints.web.exposure.include: env,health,info
 
     test.cm=working
+    
+    amazon.aws.accesskey=AKIA6PS436XZZSSPURH2
+    amazon.aws.secretkey=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
+    bucket.url=files.handson.academy
+  
+    sms4free.key=J2IX1eEa9
+    sms4free.user=0525236451
+    sms4free.password=66534228
 
 
 kind: ConfigMap

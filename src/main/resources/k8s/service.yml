@@ -8,3 +8,6 @@ spec:
       port: 8080
   selector:
     app: spring
+
+
+#connecting to deployment

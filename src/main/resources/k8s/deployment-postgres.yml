@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: Deployment #Pod/ Service/ Deployment
 metadata:
   labels:
     app: postgres
@@ -7,10 +7,10 @@ metadata:
     template: postgresql-ephemeral-template
   name: postgres-1
 spec:
-  replicas: 1
+  replicas: 1 # num of rep
   selector:
     matchLabels:
-      app: postgres
+      app: postgres # Important
   template:
     metadata:
       labels:
@@ -25,15 +25,16 @@ spec:
               value: postgres
             - name: POSTGRESQL_DATABASE
               value: postgres
-          image: >-
+          # image name
+          image: >- 
             centos/postgresql-95-centos7@sha256:d459c9bb18ec7de443fbe4dd31cff26bdc6fdc681363922e97ae2f40e64a93c1
           imagePullPolicy: IfNotPresent
-          name: postgresql
+          name: postgresql # name
           ports:
-            - containerPort: 5432
+            - containerPort: 5432 # Output to export ports
               protocol: TCP
           volumeMounts:
-            - mountPath: /var/lib/pgsql/data
+            - mountPath: /var/lib/pgsql/data # save of HD
               name: postgres-data
       volumes:
         - emptyDir: {}
